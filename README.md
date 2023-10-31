@@ -1,1 +1,1 @@
-# simple-config
+# Configured
