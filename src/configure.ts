@@ -1,16 +1,52 @@
 import * as dotenv from 'dotenv';
 import { dirname, join } from 'path';
 
-export function configure<
+function resolveEnvPath(providedEnvFilePath?: string) {
+	if (providedEnvFilePath) {
+		if (providedEnvFilePath.includes('/')) {
+			return providedEnvFilePath;
+		}
+	}
+
+	try {
+		// Is running in Node
+		if (require.main) {
+			return join(
+				dirname(require.main.filename),
+				providedEnvFilePath ?? '.env',
+			);
+		}
+	} catch (e) {
+		//
+	}
+
+	return '.env';
+}
+
+function validateResolvedVariable(resolvedEnvVariable: any) {
+	return !(
+		typeof resolvedEnvVariable === 'undefined' ||
+		(typeof resolvedEnvVariable === 'number' && isNaN(resolvedEnvVariable))
+	);
+}
+
+export async function configure<
 	T extends {
 		[key: string]:
 			| {
 					default?: any;
 					env: (e: { [key: string]: string }) => Y;
+					load?: never;
 			  }
 			| {
 					default: string;
 					env?: (e: { [key: string]: string }) => Y;
+					load?: never;
+			  }
+			| {
+					default?: any;
+					load: () => Promise<Y>;
+					env?: never;
 			  };
 	},
 	Y,
@@ -19,18 +55,14 @@ export function configure<
 	options?: {
 		envFilePath: string;
 	},
-): {
-	[K in keyof T]: T[K]['env'] extends (e: { [key: string]: string }) => infer Y
+): Promise<{
+	[K in keyof T]: T[K]['load'] extends () => Promise<infer Y>
+		? Y
+		: T[K]['env'] extends (e: { [key: string]: string }) => infer Y
 		? Y
 		: T[K]['default'];
-} {
-	const envFilePath = require.main
-		? join(dirname(require.main.filename), '../.env')
-		: options?.envFilePath;
-
-	if (envFilePath) {
-		dotenv.config({ path: envFilePath, override: true });
-	}
+}> {
+	dotenv.config({ path: resolveEnvPath(options?.envFilePath), override: true });
 
 	const processEnv = process.env as any;
 	const config: any = {};
@@ -42,26 +74,31 @@ export function configure<
 			config[`${key}`] = entry.default;
 		}
 
-		if (entry.env) {
-			const envResolved: any = entry.env(processEnv);
-
-			if (
-				typeof envResolved === 'undefined' ||
-				(typeof envResolved === 'number' && isNaN(envResolved))
-			) {
-				if (!('default' in entry)) {
-					throw new Error(
-						`Config variable '${key}' cannot be '${typeof envResolved}'`,
-					);
-				}
-
-				// Will leave the config set to the default value
-				continue;
+		const resolvedEnvVariable = await (async () => {
+			if (entry.env) {
+				return entry.env(processEnv);
 			}
 
-			config[`${key}`] = envResolved;
+			if (entry.load) {
+				return await entry.load();
+			}
+		})();
+
+		if (!validateResolvedVariable(resolvedEnvVariable)) {
+			if (!('default' in entry)) {
+				throw new Error(
+					`Config variable '${key}' cannot be '${typeof resolvedEnvVariable}'`,
+				);
+			}
+
+			// Will leave the config set to the default value
+			continue;
 		}
+
+		config[`${key}`] = resolvedEnvVariable;
 	}
 
-	return config;
+	return new Promise(resolve => {
+		resolve(config);
+	});
 }
