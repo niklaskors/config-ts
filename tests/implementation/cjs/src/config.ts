@@ -1,4 +1,4 @@
-import { configure } from 'configured';
+import { configure } from 'configure.ts';
 
 const config = configure({
 	asyncVariable: {

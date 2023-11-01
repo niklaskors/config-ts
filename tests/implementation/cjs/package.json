@@ -9,6 +9,6 @@
 		"start": "node ."
 	},
 	"dependencies": {
-		"configured": "file:../../.."
+		"configure.ts": "file:../../.."
 	}
 }
