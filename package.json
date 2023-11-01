@@ -1,5 +1,5 @@
 {
-	"name": "configured",
+	"name": "config-ts",
 	"version": "0.0.1",
 	"description": "A simple module that helps with creating a single typed configuration",
 	"main": "./dist/cjs/index.js",
