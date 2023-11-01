@@ -2,17 +2,17 @@
 	"compilerOptions": {
 		"declaration": true,
 		"outDir": "dist",
-		"module": "ESNext",
-		"target": "es2017",
+		"module": "CommonJS",
+		"target": "es2015",
 		"lib": ["ESNext"],
 		"sourceMap": true,
 		"moduleResolution": "node",
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
 		"strictNullChecks": true,
-		"types": ["node", "jest"]
+		"types": ["node"]
 	},
-	"include": ["src", "tests"],
+	"include": ["src"],
 	"exclude": ["node_modules"],
-	"files": ["src/index.ts"]
+	"files": ["src/config.ts"]
 }

@@ -1,0 +1,14 @@
+{
+	"name": "cjs",
+	"private": true,
+	"version": "1.0.0",
+	"description": "",
+	"main": "dist/index.js",
+	"scripts": {
+		"build": "tsc -p tsconfig.json",
+		"start": "node ."
+	},
+	"dependencies": {
+		"configured": "file:../../.."
+	}
+}
