@@ -13,7 +13,7 @@ By managing the way environment variables are loaded and typed it tries to preve
 
 ## Example
 Below is a sample `config.ts` file (be aware that this uses top-level await):
-```
+```ts
 import { configure } from 'configure.ts';
 
 const config = await configure({
