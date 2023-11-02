@@ -1,5 +1,4 @@
 name: Release package
-
 on:
   pull_request:
     types:
