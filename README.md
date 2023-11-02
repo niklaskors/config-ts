@@ -8,7 +8,7 @@ A simple module to help setting up a centralised typed configuration for Node.js
 This module provides a method for streamlining the usage of configuration variables.
 By managing the way environment variables are loaded and typed it tries to prevent:
 - Forgetting to convert boolean/number strings into actual booleans and numbers
-- Fail early, if a environment variable loader returns `NaN`/`undefined` and there is no default set, it will fail on start
+- Failing in the middle of execution, if a environment variable loader returns `NaN`/`undefined` and there is no default set, it will fail on start
 - Having multiple `process.env` references throughout the application
 
 ## Example
