@@ -95,7 +95,7 @@ export async function configure<
 			continue;
 		}
 
-		config[`${key}`] = 6;
+		config[`${key}`] = resolvedEnvVariable;
 	}
 
 	return new Promise(resolve => {
