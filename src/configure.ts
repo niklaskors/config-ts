@@ -17,7 +17,7 @@ function resolveEnvPath(providedEnvFilePath?: string) {
 			);
 		}
 	} catch (e) {
-		//
+		// Ignore
 	}
 
 	return '.env';
