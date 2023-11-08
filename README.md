@@ -56,7 +56,7 @@ export const config = async () =>
   await configure({
     port: {
       default: 3000,
-      env: (e) => +e.port,
+      env: (e) => +e.PORT,
     },
     secret: {
       // Example async usage
